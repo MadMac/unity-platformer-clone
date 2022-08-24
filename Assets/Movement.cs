@@ -4,87 +4,108 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    private Rigidbody2D character;
 
-	private Rigidbody2D character;
-	[SerializeField] private SpriteRenderer characterSprite;
-	[SerializeField] private Animator characterAnimator;
-	[SerializeField] private float playerSpeed = 0.5f;
-	[SerializeField] private float playerJumpPower = 20.0f;
-	[SerializeField] private float playerMaxSpeed = 6.0f;
-	private bool isGrounded = false;
-	private bool walkingRight = true;
+    private bool isGrounded = false;
+    private bool walkingRight = true;
 
-	// Start is called before the first frame update
-	void Start()
-	{
-		character = GetComponent<Rigidbody2D>();
-	}
+    [SerializeField]
+    private SpriteRenderer characterSprite;
 
-	// Update is called once per frame
-	void Update()
-	{
-		ProcessInput();
-	}
+    [SerializeField]
+    private Animator characterAnimator;
 
-	void FixedUpdate()
-	{
-		RaycastHit2D hitLeft = Physics2D.Raycast(transform.position - new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f), -Vector2.up, transform.lossyScale.y / 2, LayerMask.GetMask("World"));
-		RaycastHit2D hitRight = Physics2D.Raycast(transform.position + new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f), -Vector2.up, transform.lossyScale.y / 2, LayerMask.GetMask("World"));
-		if (hitLeft.collider || hitRight.collider)
-		{
-			isGrounded = true;
-			character.gravityScale = 0;
-		}
-		else
-		{
-			isGrounded = false;
-			character.gravityScale = 2;
-		}
-	}
+    [SerializeField]
+    private float playerSpeed = 0.5f;
 
-	void ProcessInput()
-	{
-		float dirX = Input.GetAxisRaw("Horizontal");
-		// character.velocity = new Vector2(dirX * playerSpeed, character.velocity.y);
-		character.AddForce(new Vector2(dirX * playerSpeed, 0.0f));
+    [SerializeField]
+    private float playerJumpPower = 20.0f;
 
-		if ((dirX > 0 && !walkingRight) || (dirX < 0 && walkingRight)) {
-			Flip();
-		}
+    [SerializeField]
+    private float playerMaxSpeed = 6.0f;
 
-		if (character.velocity.x > playerMaxSpeed)
-		{
-			character.velocity = new Vector2(playerMaxSpeed, character.velocity.y);
-		}
+    // Start is called before the first frame update
+    void Start()
+    {
+        character = GetComponent<Rigidbody2D>();
+    }
 
-		if (character.velocity.x < -playerMaxSpeed)
-		{
-			character.velocity = new Vector2(-playerMaxSpeed, character.velocity.y);
-		}
+    // Update is called once per frame
+    void Update()
+    {
+        ProcessInput();
+    }
 
-		if (Input.GetButtonDown("Jump") && isGrounded)
-		{
-			character.velocity = new Vector2(character.velocity.x, playerJumpPower);
-		}
+    void FixedUpdate()
+    {
+        RaycastHit2D hitLeft = Physics2D.Raycast(
+            transform.position - new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f),
+            -Vector2.up,
+            transform.lossyScale.y / 2,
+            LayerMask.GetMask("World")
+        );
+        RaycastHit2D hitRight = Physics2D.Raycast(
+            transform.position + new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f),
+            -Vector2.up,
+            transform.lossyScale.y / 2,
+            LayerMask.GetMask("World")
+        );
+        if (hitLeft.collider || hitRight.collider)
+        {
+            isGrounded = true;
+            character.gravityScale = 0;
+        }
+        else
+        {
+            isGrounded = false;
+            character.gravityScale = 2;
+        }
+    }
 
-		if (dirX != 0 && isGrounded) {
-			characterAnimator.SetBool("isRunning", true);
-		} else if (dirX == 0 && isGrounded) {
-			characterAnimator.SetBool("isRunning", false);
-		}
+    void ProcessInput()
+    {
+        float dirX = Input.GetAxisRaw("Horizontal");
+        // character.velocity = new Vector2(dirX * playerSpeed, character.velocity.y);
+        character.AddForce(new Vector2(dirX * playerSpeed, 0.0f));
 
-		characterAnimator.SetBool("isJumping", !isGrounded);
+        if ((dirX > 0 && !walkingRight) || (dirX < 0 && walkingRight))
+        {
+            Flip();
+        }
 
-		Debug.Log(characterAnimator.GetBool("isJumping"));
-	}
+        if (character.velocity.x > playerMaxSpeed)
+        {
+            character.velocity = new Vector2(playerMaxSpeed, character.velocity.y);
+        }
 
-	void Flip()
-	{
-		walkingRight = !walkingRight;
+        if (character.velocity.x < -playerMaxSpeed)
+        {
+            character.velocity = new Vector2(-playerMaxSpeed, character.velocity.y);
+        }
 
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
-	}
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            character.velocity = new Vector2(character.velocity.x, playerJumpPower);
+        }
 
+        if (dirX != 0 && isGrounded)
+        {
+            characterAnimator.SetBool("isRunning", true);
+        }
+        else if (dirX == 0 && isGrounded)
+        {
+            characterAnimator.SetBool("isRunning", false);
+        }
+
+        characterAnimator.SetBool("isJumping", !isGrounded);
+    }
+
+    void Flip()
+    {
+        walkingRight = !walkingRight;
+
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
 }
