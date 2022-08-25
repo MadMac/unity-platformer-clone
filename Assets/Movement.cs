@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Movement : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class Movement : MonoBehaviour
 
     [SerializeField]
     private float playerMaxSpeed = 6.0f;
+
+    [SerializeField]
+    private Tilemap worldMap;
 
     // Start is called before the first frame update
     void Start()
@@ -107,5 +111,18 @@ public class Movement : MonoBehaviour
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.GetContact(0).relativeVelocity.y < 0.0f)
+        {
+            // tileMap.GetTile(collision.GetContact(0).otherCollider.bounds.center);
+            Vector3 tileInWorld = collision.GetContact(0).otherCollider.bounds.center;
+            tileInWorld.y = tileInWorld.y + 0.5f;
+            worldMap
+                .GetComponent<TileMapController>()
+                .DestroyTileAt(worldMap.WorldToCell(tileInWorld));
+        }
     }
 }

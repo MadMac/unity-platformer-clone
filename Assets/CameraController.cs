@@ -14,9 +14,9 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         float camera_x = player.transform.position.x;
-        if (camera_x <= 0)
+        if (camera_x <= 11)
         {
-            camera_x = 0.0f;
+            camera_x = 11.0f;
         }
         transform.position = new Vector3(camera_x, transform.position.y, transform.position.z);
     }
