@@ -43,13 +43,13 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         RaycastHit2D hitLeft = Physics2D.Raycast(
-            transform.position - new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f),
+            transform.position - new Vector3(transform.lossyScale.x / 5, 0f, 0f),
             -Vector2.up,
             transform.lossyScale.y / 2,
             LayerMask.GetMask("World")
         );
         RaycastHit2D hitRight = Physics2D.Raycast(
-            transform.position + new Vector3(transform.lossyScale.x / 2 - 0.2f, 0f, 0f),
+            transform.position + new Vector3(transform.lossyScale.x / 5, 0f, 0f),
             -Vector2.up,
             transform.lossyScale.y / 2,
             LayerMask.GetMask("World")
@@ -117,8 +117,7 @@ public class Movement : MonoBehaviour
     {
         if (collision.GetContact(0).relativeVelocity.y < 0.0f)
         {
-            // tileMap.GetTile(collision.GetContact(0).otherCollider.bounds.center);
-            Vector3 tileInWorld = collision.GetContact(0).otherCollider.bounds.center;
+            Vector3 tileInWorld = collision.GetContact(0).point;
             tileInWorld.y = tileInWorld.y + 0.5f;
             worldMap
                 .GetComponent<TileMapController>()

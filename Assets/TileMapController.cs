@@ -21,8 +21,11 @@ public class TileMapController : MonoBehaviour
 
     public void DestroyTileAt(Vector3Int tileLocation)
     {
-        Debug.Log("## DESTROY TILE");
-        worldMap.SetTile(tileLocation, null);
-        Instantiate(explosionPrefab, tileLocation, Quaternion.identity);
+        if (worldMap.GetTile(tileLocation) != null)
+        {
+            Debug.Log("## DESTROY TILE");
+            worldMap.SetTile(tileLocation, null);
+            Instantiate(explosionPrefab, tileLocation, Quaternion.identity);
+        }
     }
 }
