@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
 
 public class Movement : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class Movement : MonoBehaviour
 
     private bool isGrounded = false;
     private bool walkingRight = true;
+    private int score = 0;
+    private bool isHuge = false;
 
     [SerializeField]
     private SpriteRenderer characterSprite;
@@ -28,6 +31,9 @@ public class Movement : MonoBehaviour
     [SerializeField]
     private Tilemap worldMap;
 
+    [SerializeField]
+    private TMP_Text scoreText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +44,16 @@ public class Movement : MonoBehaviour
     void Update()
     {
         ProcessInput();
+
+        if (isHuge)
+        {
+            Debug.Log("GO BIG");
+            transform.localScale = new Vector3(
+                transform.localScale.x,
+                2.0f,
+                transform.localScale.z
+            );
+        }
     }
 
     void FixedUpdate()
@@ -117,11 +133,33 @@ public class Movement : MonoBehaviour
     {
         if (collision.GetContact(0).relativeVelocity.y < 0.0f)
         {
-            Vector3 tileInWorld = collision.GetContact(0).point;
-            tileInWorld.y = tileInWorld.y + 0.5f;
-            worldMap
-                .GetComponent<TileMapController>()
-                .DestroyTileAt(worldMap.WorldToCell(tileInWorld));
+            Vector3 tileLocationInWorld = collision.GetContact(0).point;
+            tileLocationInWorld.y = tileLocationInWorld.y + 0.5f;
+            Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
+
+            if (isHuge)
+            {
+                worldMap.GetComponent<TileMapController>().DestroyTileAt(tileInGrid);
+            }
+            else
+            {
+                worldMap.GetComponent<TileMapController>().StartBounceTile(tileInGrid);
+            }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Coin")
+        {
+            score += 1;
+            scoreText.SetText(score.ToString());
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.tag == "Mushroom")
+        {
+            isHuge = true;
+            Destroy(other.gameObject);
         }
     }
 }

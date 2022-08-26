@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - World
+  - Coin
+  - Mushroom
   layers:
   - Default
   - TransparentFX
