@@ -13,6 +13,7 @@ public class Movement : MonoBehaviour
     private bool walkingRight = true;
     private int score = 0;
     private bool isHuge = false;
+    private bool isAlive = true;
 
     [SerializeField]
     private SpriteRenderer characterSprite;
@@ -45,7 +46,10 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        if (isAlive)
+        {
+            ProcessInput();
+        }
     }
 
     void FixedUpdate()
@@ -123,25 +127,37 @@ public class Movement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.GetContact(0).relativeVelocity.y < 0.0f)
+        if (collision.gameObject.tag == "World")
         {
-            Vector3 tileLocationInWorld = collision.GetContact(0).point;
-            tileLocationInWorld.y = tileLocationInWorld.y + 0.5f;
-            Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
+            Vector3 collisionDirection = (
+                transform.position - collision.gameObject.transform.position
+            ).normalized;
 
-            if (isHuge)
+            if (collisionDirection.y <= 0.3f && collisionDirection.y >= -0.3f)
             {
-                worldMap.GetComponent<TileMapController>().DestroyTileAt(tileInGrid);
-            }
-            else
-            {
-                worldMap.GetComponent<TileMapController>().StartBounceTile(tileInGrid);
+                Vector3 tileLocationInWorld = collision.GetContact(0).point;
+                tileLocationInWorld.y = tileLocationInWorld.y + 0.5f;
+                Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
+
+                if (isHuge)
+                {
+                    worldMap.GetComponent<TileMapController>().DestroyTileAt(tileInGrid);
+                }
+                else
+                {
+                    worldMap.GetComponent<TileMapController>().StartBounceTile(tileInGrid);
+                }
             }
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (!isAlive)
+        {
+            return;
+        }
+
         if (other.gameObject.tag == "Coin")
         {
             score += 1;
@@ -155,7 +171,6 @@ public class Movement : MonoBehaviour
         }
         else if (other.gameObject.tag == "Enemy")
         {
-            // Physics2D.IgnoreCollision(collision.collider, boxCollider2D, true);
             Vector3 collisionDirection = (
                 transform.position - other.gameObject.transform.position
             ).normalized;
@@ -169,12 +184,12 @@ public class Movement : MonoBehaviour
                 }
                 else
                 {
-                    // TODO: Game over
+                    playDeathAnimation();
                     Debug.Log("DEAD");
                 }
             }
 
-            if (collisionDirection.y > 0.9f)
+            if (collisionDirection.y >= 0.8f)
             {
                 Destroy(other.gameObject);
             }
@@ -193,5 +208,14 @@ public class Movement : MonoBehaviour
         Debug.Log("Go small");
         transform.localScale = new Vector3(transform.localScale.x, 1.0f, transform.localScale.z);
         isHuge = false;
+    }
+
+    void playDeathAnimation()
+    {
+        character.velocity = new Vector2(character.velocity.x, 10f);
+        boxCollider2D.isTrigger = true;
+        isAlive = false;
+        characterAnimator.SetBool("isRunning", false);
+        characterAnimator.SetBool("isJumping", false);
     }
 }
