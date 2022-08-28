@@ -2438,6 +2438,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 666986734, guid: 3e3381c27d10ea999add6f4675c94629, type: 3}
+      propertyPath: playerCollider
+      value: 
+      objectReference: {fileID: 1856564817}
     - target: {fileID: 7024655444316432515, guid: 3e3381c27d10ea999add6f4675c94629, type: 3}
       propertyPath: m_Name
       value: EnemyOne

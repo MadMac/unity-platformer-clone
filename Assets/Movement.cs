@@ -7,6 +7,7 @@ using TMPro;
 public class Movement : MonoBehaviour
 {
     private Rigidbody2D character;
+    private BoxCollider2D boxCollider2D;
 
     private bool isGrounded = false;
     private bool walkingRight = true;
@@ -38,22 +39,13 @@ public class Movement : MonoBehaviour
     void Start()
     {
         character = GetComponent<Rigidbody2D>();
+        boxCollider2D = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
         ProcessInput();
-
-        if (isHuge)
-        {
-            Debug.Log("GO BIG");
-            transform.localScale = new Vector3(
-                transform.localScale.x,
-                2.0f,
-                transform.localScale.z
-            );
-        }
     }
 
     void FixedUpdate()
@@ -158,8 +150,48 @@ public class Movement : MonoBehaviour
         }
         else if (other.gameObject.tag == "Mushroom")
         {
-            isHuge = true;
+            goHuge();
             Destroy(other.gameObject);
         }
+        else if (other.gameObject.tag == "Enemy")
+        {
+            // Physics2D.IgnoreCollision(collision.collider, boxCollider2D, true);
+            Vector3 collisionDirection = (
+                transform.position - other.gameObject.transform.position
+            ).normalized;
+
+            Debug.Log(collisionDirection);
+            if ((collisionDirection.x > 0.5f || collisionDirection.x < -0.5f))
+            {
+                if (isHuge)
+                {
+                    goSmall();
+                }
+                else
+                {
+                    // TODO: Game over
+                    Debug.Log("DEAD");
+                }
+            }
+
+            if (collisionDirection.y > 0.9f)
+            {
+                Destroy(other.gameObject);
+            }
+        }
+    }
+
+    void goHuge()
+    {
+        Debug.Log("Go huge");
+        transform.localScale = new Vector3(transform.localScale.x, 2.0f, transform.localScale.z);
+        isHuge = true;
+    }
+
+    void goSmall()
+    {
+        Debug.Log("Go small");
+        transform.localScale = new Vector3(transform.localScale.x, 1.0f, transform.localScale.z);
+        isHuge = false;
     }
 }
