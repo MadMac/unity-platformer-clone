@@ -12,7 +12,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private float walkingSpeed = 2.0f;
 
-    [SerializeField]
     private BoxCollider2D playerCollider;
 
     void Start()
@@ -20,6 +19,9 @@ public class EnemyController : MonoBehaviour
         // Set initial walking direction based on direction the enemy is directed initially
         walkingRight = transform.localScale.x == 1;
         boxCollider2D = GetComponent<BoxCollider2D>();
+
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        playerCollider = playerObject.GetComponent<BoxCollider2D>();
 
         enemyCharacter = GetComponent<Rigidbody2D>();
         Physics2D.IgnoreCollision(playerCollider, boxCollider2D, true);

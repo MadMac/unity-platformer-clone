@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class Movement : MonoBehaviour
@@ -15,6 +16,9 @@ public class Movement : MonoBehaviour
     private int score = 0;
     private bool isHuge = false;
     private bool isAlive = true;
+
+    // Store lives as static to keep them during scene restart
+    private static int lives = 1;
 
     [SerializeField]
     private SpriteRenderer characterSprite;
@@ -37,11 +41,19 @@ public class Movement : MonoBehaviour
     [SerializeField]
     private TMP_Text scoreText;
 
+    [SerializeField]
+    private TMP_Text livesText;
+
+    [SerializeField]
+    private Image gameOverFade;
+
     // Start is called before the first frame update
     void Start()
     {
         character = GetComponent<Rigidbody2D>();
         boxCollider2D = GetComponent<BoxCollider2D>();
+        livesText.SetText(lives.ToString());
+        gameOverFade.CrossFadeAlpha(0f, 0f, true);
     }
 
     // Update is called once per frame
@@ -53,9 +65,18 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            if (transform.position.y < -7f)
+            if (transform.position.y < -10f)
             {
-                SceneManager.LoadScene("MainScene");
+                if (lives == 1)
+                {
+                    moveToGameOver();
+                }
+                else
+                {
+                    lives -= 1;
+                    Debug.Log("DIED " + lives);
+                    SceneManager.LoadScene("MainScene");
+                }
             }
         }
     }
@@ -225,5 +246,14 @@ public class Movement : MonoBehaviour
         isAlive = false;
         characterAnimator.SetBool("isRunning", false);
         characterAnimator.SetBool("isJumping", false);
+    }
+
+    void moveToGameOver()
+    {
+        gameOverFade.CrossFadeAlpha(1f, 0.5f, false);
+        if (gameOverFade.canvasRenderer.GetAlpha() > 0.99f)
+        {
+            SceneManager.LoadScene("GameOverScene");
+        }
     }
 }
