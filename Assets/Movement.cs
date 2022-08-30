@@ -18,7 +18,7 @@ public class Movement : MonoBehaviour
     private bool isAlive = true;
 
     // Store lives as static to keep them during scene restart
-    private static int lives = 1;
+    private static int lives = 3;
 
     [SerializeField]
     private SpriteRenderer characterSprite;
@@ -168,7 +168,7 @@ public class Movement : MonoBehaviour
                 tileLocationInWorld.y = tileLocationInWorld.y + 0.5f;
                 Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
 
-                if (isHuge)
+                if (isHuge && !worldMap.GetComponent<TileMapController>().isStaticTile(tileInGrid))
                 {
                     worldMap.GetComponent<TileMapController>().DestroyTileAt(tileInGrid);
                 }
@@ -204,7 +204,6 @@ public class Movement : MonoBehaviour
                 transform.position - other.gameObject.transform.position
             ).normalized;
 
-            Debug.Log(collisionDirection);
             if ((collisionDirection.x > 0.5f || collisionDirection.x < -0.5f))
             {
                 if (isHuge)
@@ -214,27 +213,25 @@ public class Movement : MonoBehaviour
                 else
                 {
                     playDeathAnimation();
-                    Debug.Log("DEAD");
                 }
             }
 
             if (collisionDirection.y >= 0.8f)
             {
                 Destroy(other.gameObject);
+                character.velocity = new Vector2(character.velocity.x, 7f);
             }
         }
     }
 
     void goHuge()
     {
-        Debug.Log("Go huge");
         transform.localScale = new Vector3(transform.localScale.x, 2.0f, transform.localScale.z);
         isHuge = true;
     }
 
     void goSmall()
     {
-        Debug.Log("Go small");
         transform.localScale = new Vector3(transform.localScale.x, 1.0f, transform.localScale.z);
         isHuge = false;
     }
