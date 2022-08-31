@@ -188,8 +188,7 @@ public class Movement : MonoBehaviour
 
         if (other.gameObject.tag == "Coin")
         {
-            score += 1;
-            scoreText.SetText(score.ToString());
+            giveCoin();
             Destroy(other.gameObject);
         }
         else if (other.gameObject.tag == "Mushroom")
@@ -251,5 +250,11 @@ public class Movement : MonoBehaviour
         {
             SceneManager.LoadScene("GameOverScene");
         }
+    }
+
+    public void giveCoin()
+    {
+        score += 1;
+        scoreText.SetText(score.ToString());
     }
 }

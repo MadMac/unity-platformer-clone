@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -3985381054216717477}
   - component: {fileID: 4097134254254708938}
   - component: {fileID: 6616264876082126748}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MushroomPrefab
   m_TagString: Mushroom
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1333003930576665634}
   - component: {fileID: 946979612456487789}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MushroomSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

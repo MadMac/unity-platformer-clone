@@ -43,7 +43,6 @@ public class MushroomController : MonoBehaviour
                 0.5f,
                 LayerMask.GetMask("World")
             );
-            Debug.Log(movingRight);
 
             if (wallHit)
             {

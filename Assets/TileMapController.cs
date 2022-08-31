@@ -16,6 +16,12 @@ public class TileMapController : MonoBehaviour
     [SerializeField]
     private GameObject mushroomPrefab;
 
+    [SerializeField]
+    private GameObject playerObject;
+
+    [SerializeField]
+    private GameObject coinEffectPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,6 +72,20 @@ public class TileMapController : MonoBehaviour
                 );
                 Instantiate(mushroomPrefab, mushroomLocation, Quaternion.identity);
             }
+            if (
+                worldMap.GetTile(tileLocation) != null
+                && worldMap.GetTile(tileLocation).name == "boxItemCoin"
+            )
+            {
+                worldMap.SetTile(tileLocation, boxItemTileDisabled);
+                playerObject.GetComponent<Movement>().giveCoin();
+                Vector3 coinEffectLocation = new Vector3(
+                    tileLocation.x + 0.5f,
+                    tileLocation.y + 0.5f,
+                    tileLocation.z
+                );
+                Instantiate(coinEffectPrefab, coinEffectLocation, Quaternion.identity);
+            }
             float[] movementArray = new float[]
             {
                 0.1f,
@@ -101,6 +121,7 @@ public class TileMapController : MonoBehaviour
                 worldMap.GetTile(tileLocation).name == "boxItem"
                 || worldMap.GetTile(tileLocation).name == "boxItem_disabled"
                 || worldMap.GetTile(tileLocation).name == "boxItemMushroom"
+                || worldMap.GetTile(tileLocation).name == "boxItemCoin"
             )
         )
         {
