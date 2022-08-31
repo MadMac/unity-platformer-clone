@@ -74,7 +74,6 @@ public class Movement : MonoBehaviour
                 else
                 {
                     lives -= 1;
-                    Debug.Log("DIED " + lives);
                     SceneManager.LoadScene("MainScene");
                 }
             }

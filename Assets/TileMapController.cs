@@ -61,7 +61,7 @@ public class TileMapController : MonoBehaviour
                 worldMap.SetTile(tileLocation, boxItemTileDisabled);
                 Vector3 mushroomLocation = new Vector3(
                     tileLocation.x + 0.5f,
-                    tileLocation.y + 1.5f,
+                    tileLocation.y + 0.5f,
                     tileLocation.z
                 );
                 Instantiate(mushroomPrefab, mushroomLocation, Quaternion.identity);
