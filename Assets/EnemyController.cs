@@ -7,6 +7,8 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D enemyCharacter;
     private BoxCollider2D boxCollider2D;
 
+    private bool isAlive = true;
+
     private bool walkingRight = true;
 
     [SerializeField]
@@ -34,6 +36,16 @@ public class EnemyController : MonoBehaviour
 
     void moveEnemy()
     {
+        if (!isAlive)
+        {
+            if (transform.position.y < -10f)
+            {
+                Destroy(gameObject);
+            }
+
+            return;
+        }
+
         if (walkingRight)
         {
             enemyCharacter.velocity = new Vector2(walkingSpeed, enemyCharacter.velocity.y);
@@ -64,5 +76,19 @@ public class EnemyController : MonoBehaviour
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    void FlipUpsideDown()
+    {
+        Vector3 theScale = transform.localScale;
+        theScale.y *= -1;
+        transform.localScale = theScale;
+    }
+
+    public void jumpDeath()
+    {
+        FlipUpsideDown();
+        isAlive = false;
+        Destroy(boxCollider2D);
     }
 }
