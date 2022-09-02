@@ -36,6 +36,7 @@ public class TileMapController : MonoBehaviour
         if (worldMap.GetTile(tileLocation) != null)
         {
             worldMap.SetTile(tileLocation, null);
+            destroyEnemisOnTopOfBlock(tileLocation);
             Instantiate(explosionPrefab, tileLocation, Quaternion.identity);
         }
     }
@@ -100,29 +101,7 @@ public class TileMapController : MonoBehaviour
                 0.0f
             };
 
-            // Check if enemies are on top of the block
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            foreach (GameObject enemy in enemies)
-            {
-                RaycastHit2D enemyCollider = Physics2D.Raycast(
-                    enemy.transform.position,
-                    -Vector2.up,
-                    0.5f,
-                    LayerMask.GetMask("World")
-                );
-
-                if (enemyCollider)
-                {
-                    Vector3 tileLocationInWorld = enemyCollider.point;
-                    tileLocationInWorld.y = tileLocationInWorld.y - 0.5f;
-                    Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
-                    Debug.Log(tileInGrid);
-                    if (tileInGrid == tileLocation)
-                    {
-                        enemy.GetComponent<EnemyController>().jumpDeath();
-                    }
-                }
-            }
+            destroyEnemisOnTopOfBlock(tileLocation);
 
             for (int i = 0; i < movementArray.Length; i++)
             {
@@ -153,5 +132,31 @@ public class TileMapController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void destroyEnemisOnTopOfBlock(Vector3Int tileLocation)
+    { // Check if enemies are on top of the block
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies)
+        {
+            RaycastHit2D enemyCollider = Physics2D.Raycast(
+                enemy.transform.position,
+                -Vector2.up,
+                0.5f,
+                LayerMask.GetMask("World")
+            );
+
+            if (enemyCollider)
+            {
+                Vector3 tileLocationInWorld = enemyCollider.point;
+                tileLocationInWorld.y = tileLocationInWorld.y - 0.5f;
+                Vector3Int tileInGrid = worldMap.WorldToCell(tileLocationInWorld);
+
+                if (tileInGrid == tileLocation)
+                {
+                    enemy.GetComponent<EnemyController>().jumpDeath();
+                }
+            }
+        }
     }
 }

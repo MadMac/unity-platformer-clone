@@ -20,6 +20,8 @@ public class Movement : MonoBehaviour
     // Store lives as static to keep them during scene restart
     private static int lives = 3;
 
+    private float currentMovementForce = 0f;
+
     [SerializeField]
     private SpriteRenderer characterSprite;
 
@@ -63,25 +65,24 @@ public class Movement : MonoBehaviour
         {
             ProcessInput();
         }
-        else
+        if (transform.position.y < -10f)
         {
-            if (transform.position.y < -10f)
+            if (lives == 1)
             {
-                if (lives == 1)
-                {
-                    moveToGameOver();
-                }
-                else
-                {
-                    lives -= 1;
-                    SceneManager.LoadScene("MainScene");
-                }
+                moveToGameOver();
+            }
+            else
+            {
+                lives -= 1;
+                SceneManager.LoadScene("MainScene");
             }
         }
     }
 
     void FixedUpdate()
     {
+        character.AddForce(new Vector2(currentMovementForce * playerSpeed, 0.0f));
+
         RaycastHit2D hitLeft = Physics2D.Raycast(
             transform.position - new Vector3(transform.lossyScale.x / 5, 0f, 0f),
             -Vector2.up,
@@ -108,11 +109,14 @@ public class Movement : MonoBehaviour
 
     void ProcessInput()
     {
-        float dirX = Input.GetAxisRaw("Horizontal");
+        currentMovementForce = Input.GetAxisRaw("Horizontal");
         // character.velocity = new Vector2(dirX * playerSpeed, character.velocity.y);
-        character.AddForce(new Vector2(dirX * playerSpeed, 0.0f));
 
-        if ((dirX > 0 && !walkingRight) || (dirX < 0 && walkingRight))
+
+        if (
+            (currentMovementForce > 0 && !walkingRight)
+            || (currentMovementForce < 0 && walkingRight)
+        )
         {
             Flip();
         }
@@ -132,11 +136,11 @@ public class Movement : MonoBehaviour
             character.velocity = new Vector2(character.velocity.x, playerJumpPower);
         }
 
-        if (dirX != 0 && isGrounded)
+        if (currentMovementForce != 0 && isGrounded)
         {
             characterAnimator.SetBool("isRunning", true);
         }
-        else if (dirX == 0 && isGrounded)
+        else if (currentMovementForce == 0 && isGrounded)
         {
             characterAnimator.SetBool("isRunning", false);
         }
@@ -216,7 +220,7 @@ public class Movement : MonoBehaviour
 
             if (collisionDirection.y >= 0.8f)
             {
-                Destroy(other.gameObject);
+                other.gameObject.GetComponent<EnemyController>().jumpDeath();
                 character.velocity = new Vector2(character.velocity.x, 7f);
             }
         }

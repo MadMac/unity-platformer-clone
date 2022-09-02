@@ -3188,7 +3188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterSprite: {fileID: 100358371}
   characterAnimator: {fileID: 100358372}
-  playerSpeed: 0.5
+  playerSpeed: 9
   playerJumpPower: 20
   playerMaxSpeed: 6
   worldMap: {fileID: 440955572}
